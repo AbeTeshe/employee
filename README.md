@@ -1,6 +1,6 @@
 # employee
 This is the simple MERN Stack employee form using NodeJS, Express and MongoDB for backend and database. 
-And for frontend ReactJS and Redux for state management plus styled-components for styiling the 
+And for frontend ReactJS and Redux for state management plus styled-components for styling the 
 components.
 
 
