@@ -35,6 +35,15 @@ router.delete("/:id", async(req, res) => {
     }
 })
 
+router.get("/:id", async(req, res) => {
+    try {
+        const employees = await Employee.findById(req.params.id);
+        res.status(200).json(employees);
+    } catch (err) {
+        res.status(500).json(err.message);
+    }
+});
+
 //GET EMPLOYEES
 router.get("/", async(req, res) => {
     try {
