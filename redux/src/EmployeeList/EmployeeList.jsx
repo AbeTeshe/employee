@@ -5,9 +5,10 @@ import {useGetEmployeeListQuery, useDeleteEmployeeMutation} from "../redux/emplo
 //import {deleteEmployee, getEmployee} from "../../redux/apiCalls";
 import moment from 'moment';
 import {toast} from 'react-toastify';
+import { Link } from 'react-router-dom';
 
 
-const EmployeeList = (props)  => {
+const EmployeeList = ()  => {
     //const employees = useSelector((state) => state.employee.employees);
 
     const {data, error, isLoading} = useGetEmployeeListQuery();
@@ -47,7 +48,9 @@ const EmployeeList = (props)  => {
                 <Td>{emp.gender}</Td>
                 <Td>{emp.salary}</Td>
                 <Td><button style={{color: 'red'}} onClick={() => handleDelete(emp._id)}>Delete</button></Td>
-                <Td><button style={{color: 'green'}} onClick={() => props.setCurrentId(emp._id)}>Edit</button></Td>
+                <Td><Link to={`/update/${emp._id}`}>
+                    <button style={{color: 'green'}} >Edit</button>
+                </Link></Td>
             </tr>))}
         </Table>
         </Wrapper>

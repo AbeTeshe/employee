@@ -1,28 +1,39 @@
 import React, {useState, useEffect} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-//import {Employee} from "../../redux/employeeSlice";
+import { Link } from 'react-router-dom';
 import {Wrapper, Form, Label, Select, Input, Button, Title} from './NewEmployee';
-// import { addEmployee, updateEmployee } from '../../redux/apiCalls';
 import {useAddEmployeeMutation, useGetEmployeeQuery, useUpdateEmployeeMutation} from "../redux/employeeApi";
 import { toast } from 'react-toastify';
+import {useParams, useNavigate}  from "react-router-dom";
 
-const NewEmployee = (props) => {
+const NewEmployee = () => {
     const [employees, setEmployees] = useState({
     name: "",
     dateOfBirth: "",
     gender:"",
     salary:0
     });
+    const [editMode, setEditMode] = useState(false);
+    const navigate = useNavigate();
+    const {id} = useParams();
+    console.log(id);
 
     const [addEmployee] = useAddEmployeeMutation();
     const [updateEmployee] = useUpdateEmployeeMutation();
-    const {data, error, isLoading} = useGetEmployeeQuery(props.currentId);
+    const {data} = useGetEmployeeQuery(id);
+  
+
 
     useEffect(() => {
-        if(data) {
-            setEmployees(data);
+        if(id) {
+            setEditMode(true);
+            if(data){
+                setEmployees(data);
+            }
         }
-    }, [data]);
+        else {
+            setEditMode(false);
+        }
+    }, [id, data]);
 
     
     const handleChange = (e) => {
@@ -33,7 +44,6 @@ const NewEmployee = (props) => {
     }
 
     const clear = () => {
-        props.setCurrentId(0);
         setEmployees({
             name:"", dateOfBirth: "", gender: "", salary: 0
         });
@@ -41,13 +51,15 @@ const NewEmployee = (props) => {
 
     const handleSumbit = async (e) => {
         e.preventDefault();
-        if(props.currentId !== 0){
-            await updateEmployee( employees);
-            toast.success("Employee Updated Successfully");
+        if(!editMode){
+            await addEmployee(employees);
+            navigate("/");
+            toast.success("Employee Added Successfully");
         }
         else {
-            await addEmployee(employees);
-            toast.success("Employee Added Successfully");
+            await updateEmployee( {id, ...employees});
+            navigate("/");
+            toast.success("Employee Updated Successfully");
         }
         clear();
     }
@@ -55,6 +67,7 @@ const NewEmployee = (props) => {
     return (
         <Wrapper>
             <Title>Add Employee Form</Title>
+            
             <Form onSubmit={handleSumbit}>
                 <Label htmlFor='name'>Name</Label>
                 <Input type="text" id="name" name="name" value={employees.name} onChange={handleChange} />
@@ -68,7 +81,7 @@ const NewEmployee = (props) => {
                 </Select>
                 <Label htmlFor='salary'>Salary</Label>
                 <Input type="number" id="salary" name="salary" value={employees.salary} onChange={handleChange}/>
-                <Button type="submit">{props.currentId ? 'Update Employee': 'Add Employee'}</Button>
+                <Button type="submit">{id ? 'Update Employee': 'Add Employee'}</Button>
             </Form>
         </Wrapper>
     )
